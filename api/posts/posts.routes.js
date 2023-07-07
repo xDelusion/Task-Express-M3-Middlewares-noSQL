@@ -6,7 +6,8 @@ const {
   postsUpdate,
   postsDelete,
   postsCreate,
-  fetchPost, // imported fetchPost here  <<<<
+  fetchPost,
+  getPostById,
 } = require("./posts.controllers");
 
 router.param("postId", async (req, res, next, postId) => {
@@ -15,8 +16,10 @@ router.param("postId", async (req, res, next, postId) => {
   try {
     const foundPost = fetchPost(postId);
     // I want to return foundPost  = and use fetchPost(postId) Fn
-    if (!foundPost) return next({ status: 404, message: "Post not found" });
-    console.log(foundPost);
+    if (!foundPost) {
+      return next({ status: 404, message: "Post not found" });
+    }
+    // console.log(foundPost);
     req.post = foundPost;
     return next(); // without next() postman would not show anything
     /*            // with next() activated it should an show error msg/ status code  */
@@ -31,5 +34,7 @@ router.post("/", uploader.single("image"), postsCreate);
 router.delete("/:postId", postsDelete);
 
 router.put("/:postId", postsUpdate);
+
+router.get("/:postId", getPostById);
 
 module.exports = router;
